@@ -1,5 +1,6 @@
-package com.nikolaev.orderexchange.dao;
+package com.nikolaev.orderexchange.dao.impl;
 
+import com.nikolaev.orderexchange.dao.PersonDAO;
 import com.nikolaev.orderexchange.dataSource.DatabaseConnection;
 import com.nikolaev.orderexchange.entity.PersonEntity;
 import com.nikolaev.orderexchange.entity.RoleEntity;
@@ -16,29 +17,29 @@ public class PersonDAOImpl implements PersonDAO {
     private static PersonDAOImpl instance;
     private final DatabaseConnection databaseConnection = DatabaseConnection.getInstance();
 
-    private static String PERSON_ID = "person_id";
-    private static String PERSON_NAME = "person_name";
-    private static String EMAIL = "email";
-    private static String PASSWORD_HASH = "password_hash";
-    private static String ROLE_ID = "role_id";
-    private static String RATING = "rating";
+    private static final String PERSON_ID = "person_id";
+    private static final String PERSON_NAME = "person_name";
+    private static final String EMAIL = "email";
+    private static final String PASSWORD_HASH = "password_hash";
+    private static final String ROLE_ID = "role_id";
+    private static final String RATING = "rating";
 
-    private PersonDAOImpl() {
+    private PersonDAOImpl() throws SQLException {
 
     }
 
-    public static synchronized PersonDAOImpl getInstance() {
+    public static synchronized PersonDAOImpl getInstance() throws SQLException {
         if (instance == null) {
             instance = new PersonDAOImpl();
         }
         return instance;
     }
 
-    private static String FIND_BY_ID_QUERY = "SELECT * FROM person WHERE person_id = ;";
-    private static String FIND_ALL_QUERY = "SELECT * FROM person;";
-    private static String SAVE = "INSERT INTO person (person_name, email, password_hash, role_id, rating) VALUES (?, ?, ?, ?, ?)";
-    private static String UPDATE = "UPDATE person SET person_name = ?, email = ?, password_hash = ?, role_id = ? WHERE person_id = ?";
-    private static String DELETE = "DELETE FROM person WHERE person_id = ?";
+    private static final String FIND_BY_ID_QUERY = "SELECT * FROM person WHERE person_id = ;";
+    private static final String FIND_ALL_QUERY = "SELECT * FROM person;";
+    private static final String SAVE = "INSERT INTO person (person_name, email, password_hash, role_id, rating) VALUES (?, ?, ?, ?, ?)";
+    private static final String UPDATE = "UPDATE person SET person_name = ?, email = ?, password_hash = ?, role_id = ? WHERE person_id = ?";
+    private static final String DELETE = "DELETE FROM person WHERE person_id = ?";
 
     @Override
     public Optional<PersonEntity> findById(Integer id) {
@@ -75,7 +76,7 @@ public class PersonDAOImpl implements PersonDAO {
     }
 
     @Override
-    public void save(PersonEntity entity) {
+    public PersonEntity save(PersonEntity entity) {
         try (
                 Connection connection = databaseConnection.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(SAVE);
@@ -88,6 +89,7 @@ public class PersonDAOImpl implements PersonDAO {
         } catch (SQLException e) {
             throw new RuntimeException("Error to save person", e);
         }
+        return entity;
     }
 
     @Override
@@ -108,13 +110,14 @@ public class PersonDAOImpl implements PersonDAO {
     }
 
     @Override
-    public void delete(PersonEntity entity) {
+    public boolean delete(PersonEntity entity) {
         try (
                 Connection connection = databaseConnection.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(DELETE);
         ) {
             preparedStatement.setInt(1, entity.getPerson_id());
-            preparedStatement.executeUpdate();
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
         } catch (SQLException e) {
             throw new RuntimeException("Error to delete person", e);
         }
