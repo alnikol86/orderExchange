@@ -9,11 +9,14 @@ public final class PropertiesUtil {
 
     private static final Properties PROPERTIES = new Properties();
 
+    private PropertiesUtil() {
+    }
+
     static {
         loadProperties();
     }
 
-    private static String get(String key) {
+    public static String get(String key) {
         return PROPERTIES.getProperty(key);
     }
 
@@ -29,8 +32,5 @@ public final class PropertiesUtil {
         } catch (IOException e) {
             throw new RuntimeException("Something is wrong with loading the properties file.", e);
         }
-    }
-
-    private PropertiesUtil() {
     }
 }
