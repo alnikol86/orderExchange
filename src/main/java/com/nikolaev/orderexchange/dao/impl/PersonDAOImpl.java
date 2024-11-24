@@ -35,7 +35,7 @@ public class PersonDAOImpl implements PersonDAO {
         return instance;
     }
 
-    private static final String FIND_BY_ID_QUERY = "SELECT * FROM person WHERE person_id = ;";
+    private static final String FIND_BY_ID_QUERY = "SELECT * FROM person WHERE person_id = ?;";
     private static final String FIND_ALL_QUERY = "SELECT * FROM person;";
     private static final String SAVE = "INSERT INTO person (person_name, email, password_hash, role_id, rating) VALUES (?, ?, ?, ?, ?)";
     private static final String UPDATE = "UPDATE person SET person_name = ?, email = ?, password_hash = ?, role_id = ? WHERE person_id = ?";
@@ -84,7 +84,7 @@ public class PersonDAOImpl implements PersonDAO {
             preparedStatement.setString(1, entity.getName());
             preparedStatement.setString(2, entity.getEmail());
             preparedStatement.setString(3, entity.getPassword());
-            preparedStatement.setInt(4, entity.getRole().getId());
+            preparedStatement.setInt(4, entity.getRole());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Error to save person", e);
@@ -101,7 +101,7 @@ public class PersonDAOImpl implements PersonDAO {
             preparedStatement.setString(1, entity.getName());
             preparedStatement.setString(2, entity.getEmail());
             preparedStatement.setString(3, entity.getPassword());
-            preparedStatement.setInt(4, entity.getRole().getId());
+            preparedStatement.setInt(4, entity.getRole());
             preparedStatement.setInt(5, entity.getPerson_id());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -132,7 +132,7 @@ public class PersonDAOImpl implements PersonDAO {
         person.setName(resultSet.getString(PERSON_NAME));
         person.setEmail(resultSet.getString(EMAIL));
         person.setPassword(resultSet.getString(PASSWORD_HASH));
-        person.setRole(role);
+        person.setRole(role.getId());
         person.setRating(resultSet.getDouble(RATING));
 
         return person;
