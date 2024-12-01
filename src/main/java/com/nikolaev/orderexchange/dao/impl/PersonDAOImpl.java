@@ -24,6 +24,12 @@ public class PersonDAOImpl implements PersonDAO {
     private static final String ROLE_ID = "role_id";
     private static final String RATING = "rating";
 
+    private static final String FIND_BY_ID_QUERY = "SELECT * FROM person WHERE person_id = ?";
+    private static final String FIND_ALL_QUERY = "SELECT * FROM person";
+    private static final String SAVE_QUERY = "INSERT INTO person (person_name, email, password_hash, role_id, rating) VALUES (?, ?, ?, ?, ?)";
+    private static final String UPDATE_QUERY = "UPDATE person SET person_name = ?, email = ?, password_hash = ?, role_id = ? WHERE person_id = ?";
+    private static final String DELETE_QUERY = "DELETE FROM person WHERE person_id = ?";
+
     private PersonDAOImpl() throws SQLException {
 
     }
@@ -34,12 +40,6 @@ public class PersonDAOImpl implements PersonDAO {
         }
         return instance;
     }
-
-    private static final String FIND_BY_ID_QUERY = "SELECT * FROM person WHERE person_id = ?;";
-    private static final String FIND_ALL_QUERY = "SELECT * FROM person;";
-    private static final String SAVE = "INSERT INTO person (person_name, email, password_hash, role_id, rating) VALUES (?, ?, ?, ?, ?)";
-    private static final String UPDATE = "UPDATE person SET person_name = ?, email = ?, password_hash = ?, role_id = ? WHERE person_id = ?";
-    private static final String DELETE = "DELETE FROM person WHERE person_id = ?";
 
     @Override
     public Optional<PersonEntity> findById(Integer id) {
@@ -79,7 +79,7 @@ public class PersonDAOImpl implements PersonDAO {
     public PersonEntity save(PersonEntity entity) {
         try (
                 Connection connection = databaseConnection.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(SAVE);
+                PreparedStatement preparedStatement = connection.prepareStatement(SAVE_QUERY);
         ) {
             preparedStatement.setString(1, entity.getName());
             preparedStatement.setString(2, entity.getEmail());
@@ -96,7 +96,7 @@ public class PersonDAOImpl implements PersonDAO {
     public void update(PersonEntity entity) {
         try (
                 Connection connection = databaseConnection.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(UPDATE);
+                PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_QUERY);
         ) {
             preparedStatement.setString(1, entity.getName());
             preparedStatement.setString(2, entity.getEmail());
@@ -113,7 +113,7 @@ public class PersonDAOImpl implements PersonDAO {
     public boolean delete(PersonEntity entity) {
         try (
                 Connection connection = databaseConnection.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(DELETE);
+                PreparedStatement preparedStatement = connection.prepareStatement(DELETE_QUERY);
         ) {
             preparedStatement.setInt(1, entity.getPerson_id());
             int rowsAffected = preparedStatement.executeUpdate();
