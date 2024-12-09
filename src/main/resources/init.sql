@@ -12,7 +12,7 @@ CREATE TABLE person (
                       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                       FOREIGN KEY (role_id) REFERENCES role(role_id)
 );
-CREATE TABLE project (
+CREATE TABLE projectEntity (
                          project_id SERIAL PRIMARY KEY,
                          person_id INT NOT NULL,
                          title VARCHAR(255) NOT NULL,
@@ -32,7 +32,7 @@ CREATE TABLE bid (
                      proposal TEXT NOT NULL,
                      status VARCHAR(50) NOT NULL CHECK (status IN ('pending', 'accepted', 'rejected')),
                      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                     FOREIGN KEY (project_id) REFERENCES project(project_id),
+                     FOREIGN KEY (project_id) REFERENCES projectEntity(project_id),
                      FOREIGN KEY (person_id) REFERENCES person(person_id)
 );
 CREATE TABLE project_update (
@@ -40,7 +40,7 @@ CREATE TABLE project_update (
                                 project_id INT NOT NULL,
                                 update_text TEXT NOT NULL,
                                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                FOREIGN KEY (project_id) REFERENCES project(project_id)
+                                FOREIGN KEY (project_id) REFERENCES projectEntity(project_id)
 );
 CREATE TABLE message (
                          message_id SERIAL PRIMARY KEY,
@@ -51,7 +51,7 @@ CREATE TABLE message (
                          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                          FOREIGN KEY (sender_id) REFERENCES person(person_id),
                          FOREIGN KEY (receiver_id) REFERENCES person(person_id),
-                         FOREIGN KEY (project_id) REFERENCES project(project_id)
+                         FOREIGN KEY (project_id) REFERENCES projectEntity(project_id)
 );
 CREATE TABLE review (
                         review_id SERIAL PRIMARY KEY,
@@ -61,7 +61,7 @@ CREATE TABLE review (
                         rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
                         comment TEXT,
                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                        FOREIGN KEY (project_id) REFERENCES project(project_id),
+                        FOREIGN KEY (project_id) REFERENCES projectEntity(project_id),
                         FOREIGN KEY (reviewer_id) REFERENCES person(person_id),
                         FOREIGN KEY (reviewed_person_id) REFERENCES person(person_id)
 );

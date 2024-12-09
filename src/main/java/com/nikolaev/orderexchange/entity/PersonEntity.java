@@ -14,6 +14,6 @@ public class PersonEntity {
     private String name;
     private String email;
     private String password;
-    private RoleEntity role;
+    private Integer role;
     private Double rating;
 }
